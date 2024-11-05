@@ -5,6 +5,7 @@ export interface Modal {
   groupname?: string | null;
   groupradio?: any;
   groupcheck?: any;
+  selectOptions?: Array<{ data: string; value: string }>;
   id: string;
   fontSize?: string;
 }

@@ -83,6 +83,7 @@ export class AddComponent implements AfterViewInit {
     { icon: 'fa fa-pencil', name: 'Signature' },
     { icon: 'fa fa-circle', name: 'Radio Button' },
     { icon: 'fa fa-check-square', name: 'Checkbox' },
+    { icon: 'fa fa-check-square', name: 'Select' },
   ];
 
   // field() {
@@ -149,6 +150,7 @@ export class AddComponent implements AfterViewInit {
       groupname: null,
       groupradio: null,
       groupcheck: null,
+      selectOptions: [], 
       id: '',
       fontSize: '16px', 
     };
@@ -169,6 +171,8 @@ export class AddComponent implements AfterViewInit {
           event.dataTransfer?.getData('text/plain').split(':')[1]
         }`,
         all_elements: this.modalDataMap,
+        current_element_data: currentModalData,
+        current_element_id: currentElementId
       },
     });
 
@@ -192,6 +196,9 @@ export class AddComponent implements AfterViewInit {
           }
           if (result.display.groupcheck.length > 0) {
             currentModalData.groupcheck = result.display.groupcheck;
+          }
+          if (result.display.selectOptions?.length > 0) {
+            currentModalData.selectOptions = result.display.selectOptions;
           }
         }
         if (result.validation) {
@@ -497,7 +504,52 @@ export class AddComponent implements AfterViewInit {
         container.appendChild(inputElement);
         break;
       }
-
+      case 'SelectField': {
+        const selectElement = iframeDocument.createElement(
+          'select'
+        ) as HTMLSelectElement;
+        
+        // Set basic attributes
+        selectElement.setAttribute('id', modalData?.id || '');
+        selectElement.setAttribute('readonly', 'true');
+        
+        // Apply similar styling
+        selectElement.style.width = '100%';
+        selectElement.style.height = '100%';
+        selectElement.style.padding = '4px';
+        selectElement.style.outline = 'none';
+        selectElement.style.border = 'none';
+        selectElement.style.backgroundColor = '#fbdeb8';
+        selectElement.style.boxSizing = 'border-box';
+        selectElement.style.fontSize = modalData?.fontSize || '16px';
+        
+        // Add options from modalData
+        if (modalData) {
+          // Add default/placeholder option if specified
+          if (modalData.placeholder) {
+            const placeholderOption = iframeDocument.createElement('option');
+            placeholderOption.value = '';
+            placeholderOption.text = modalData.placeholder;
+            placeholderOption.disabled = true;
+            placeholderOption.selected = true;
+            selectElement.appendChild(placeholderOption);
+          }
+          
+          // Add all other options
+      
+        }
+        
+        // Add change event listener
+        selectElement.addEventListener('change', (event) => {
+          const data = event.target as HTMLSelectElement;
+          modalData = this.modalDataMap.get(currentElementId);
+          this.checkvalidation(data, modalData, container, divError);
+          selectElement.setAttribute('value', data.value);
+        });
+        
+        container.appendChild(selectElement);
+        break;
+      }
       case 'Phone Number': {
         const phoneElement = iframeDocument.createElement(
           'input'
@@ -676,6 +728,47 @@ export class AddComponent implements AfterViewInit {
 
         break;
       }
+      case 'Select': {
+        container.style.display = 'block';
+        container.style.resize = 'both';
+        container.style.overflow = 'hidden';
+        container.style.width = '200px';
+        container.style.minWidth = '100px';
+
+        const select = iframeDocument.createElement('select');
+        select.style.width = '100%';
+        select.style.padding = '5px';
+        select.style.fontSize = modalData?.fontSize || '16px';
+        select.style.border = '1px solid #ccc';
+        select.style.borderRadius = '4px';
+        select.style.backgroundColor = '#fbdeb8';
+        select.style.cursor = 'not-allowed';
+        select.style.opacity = '0.7';
+       
+
+        // Add placeholder option if exists
+        if (modalData?.placeholder) {
+          const placeholderOption = iframeDocument.createElement('option');
+          placeholderOption.value = '';
+          placeholderOption.textContent = modalData.placeholder;
+          placeholderOption.selected = true;
+         
+          select.appendChild(placeholderOption);
+        }
+
+        // Add options from modalData
+        if (modalData?.selectOptions) {
+          modalData.selectOptions.forEach(option => {
+            const optionElement = iframeDocument.createElement('option');
+            optionElement.value = option.value;
+            optionElement.textContent = option.data;
+            select.appendChild(optionElement);
+          });
+        }
+
+        container.appendChild(select);
+        break;
+      }
       case 'Signature': {
         // Create a container for the canvas
         const canvasContainer = iframeDocument.createElement('div');
@@ -840,6 +933,9 @@ export class AddComponent implements AfterViewInit {
           if (result.display.groupcheck.length > 0) {
             currentModalData.groupcheck = result.display.groupcheck;
           }
+          if (result.display.selectOptions) {
+            currentModalData.selectOptions = result.display.selectOptions;
+          }
         }
         if (result.validation) {
           if (result.validation.minlength) {
@@ -861,6 +957,26 @@ export class AddComponent implements AfterViewInit {
         );element.style.fontSize =
         this.modalDataMap.get(currentElementId)?.fontSize || '16px';
     
+        
+        if (element.tagName.toLowerCase() === 'select') {
+          // Clear existing options
+          while (element.firstChild) {
+            element.removeChild(element.firstChild);
+          }
+
+          // Add new options
+          currentModalData.selectOptions?.forEach(option => {
+            const optElement = document.createElement('option');
+            optElement.value = option.value;
+            optElement.textContent = option.data;
+            element.appendChild(optElement);
+          });
+
+          // Update other properties
+          element.setAttribute('id', currentModalData.id || '');
+          element.style.fontSize = currentModalData.fontSize || '16px';
+        }
+      
         if (element.type == 'checkbox') {
           element.setAttribute(
             'name',

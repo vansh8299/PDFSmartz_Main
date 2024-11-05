@@ -161,7 +161,10 @@ export class InputModalComponent {
     });
     this.dialogRef.close({
       status: event,
-      display: this.displayform.value,
+      display: {
+        ...this.displayform.value,
+        selectOptions: this.selectOptions.value
+      },
       validation: this.validationform.value,
     });
   }
@@ -173,6 +176,9 @@ export class InputModalComponent {
   }
   get groupcheck() {
     return this.displayform.get('groupcheck') as FormArray;
+  }
+  get selectOptions() {
+    return this.displayform.get('selectOptions') as FormArray;
   }
   addRadio() {
     const radioform = this.fb.group({
@@ -212,6 +218,7 @@ export class InputModalComponent {
       groupname: [''],
       groupradio: this.fb.array([]),
       groupcheck: this.fb.array([]),
+      selectOptions: this.fb.array([]),
       id: [
         '',
         [Validators.required, Validators.minLength(3), this.noSpaceValidator()],
@@ -236,6 +243,9 @@ export class InputModalComponent {
         minlength: data.minlength || [],
         maxlength: data.maxlength || [],
       });
+      if (data.selectOptions && data.selectOptions.length > 0) {
+        this.patchSelectOptions(data.selectOptions);
+      }
       if (data.groupradio && data.groupradio.length > 0) {
         this.radiopresent = true;
         this.patchGroupRadio(data.groupradio, data.id);
@@ -253,6 +263,30 @@ export class InputModalComponent {
           Validateid(this.data.all_elements, this.data.current_element_id)
         );
     }
+  }
+
+  addSelectOption() {
+    const optionForm = this.fb.group({
+      data: ['', Validators.required],
+      value: ['', Validators.required]
+    });
+    this.selectOptions.push(optionForm);
+  }
+
+  // Method to delete a select option
+  deleteSelectOption(index: number) {
+    this.selectOptions.removeAt(index);
+  }
+
+  // Method to patch existing select options
+  patchSelectOptions(options: Array<{ data: string; value: string }>) {
+    options.forEach(option => {
+      const optionForm = this.fb.group({
+        data: [option.data, Validators.required],
+        value: [option.value, Validators.required]
+      });
+      this.selectOptions.push(optionForm);
+    });
   }
   getFontSizeValue(): number {
     const fontSize = this.displayform.get('fontSize')?.value;
