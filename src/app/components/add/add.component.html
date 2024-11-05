@@ -1,0 +1,160 @@
+<div class="top">
+  <div class="inputs">
+    <!-- <div class="title">
+      <label
+        >Title<span
+          style="
+            color: rgb(255, 29, 29);
+            font-size: 20px;
+            font-weight: 700;
+            margin-left: 2px;
+          "
+          >*</span
+        ></label
+      >
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Enter the form title"
+        required
+        [(ngModel)]="formTitle"
+      />
+    </div> -->
+    <div class="firsthalf">
+      <div class="name">
+        <label>
+          Name
+          <span
+            style="
+              color: rgb(255, 29, 29);
+              font-size: 20px;
+              font-weight: 700;
+              margin-left: 2px;
+            "
+            >*</span
+          >
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Enter the form machine name"
+          required
+          minlength="2"
+          #nameInput="ngModel"
+          [(ngModel)]="formName"
+        />
+        <div
+          *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)"
+          class="error-message"
+        >
+          <div *ngIf="nameInput.errors?.['minlength']">
+            Name must contains at least 2 character.
+          </div>
+        </div>
+      </div>
+      <div class="api">
+        <div class="link">
+          <label>
+            Form Type
+            <span
+              style="
+                color: rgb(255, 29, 29);
+                font-size: 20px;
+                font-weight: 700;
+                margin-left: 2px;
+              "
+              >*</span
+            >
+          </label>
+          <div class="dropdown">
+            <select
+              [(ngModel)]="selectedFormType"
+              class="form-select"
+              required
+              placeholder="Select the form type"
+              [ngClass]="{ 'text-muted': !selectedFormType }"
+              style="
+                appearance: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                padding-right: 30px;
+              "
+            >
+              <option value="" disabled hidden>Select the form type</option>
+              @for (formType of formTypes; track formType) {
+              <option [value]="formType">
+                {{ formType }}
+              </option>
+              }
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="secondhalf">
+      <button
+      class="btn btn-success"
+      style="
+        background-color: #2176cb;
+        border-color: #2176cb;
+        color: white;
+        z-index: 1;
+        margin-top: 30px;
+      "
+      (click)="submitpdf()"
+      [disabled]="formName == '' || selectedFormType == ''"
+    >
+      Create Form
+    </button>
+    </div>
+  
+  </div>
+
+  <div class="mid-section">
+    <div class="left">
+      <div class="main">
+        <div class="pdf-fields">
+          <div class="fields">
+            <span style="text-align: center; color: black">PDF Fields</span>
+          </div>
+        </div>
+        <div id="formioField"></div>
+        <div class="all-fields">
+          @for(f of allfields ; track f){
+          <div
+            class="fieldnames draggable-element"
+            draggable="true"
+            (dragstart)="onDragStart($event, f.name)"
+          >
+            <i
+              class="{{ f.icon }}"
+              aria-hidden="true"
+              style="margin-right: 7px"
+            ></i>
+            <span>{{ f.name }}</span>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="right">
+      <div
+        class="pdf-container"
+        style="
+          width: 100%;
+          height: 95%;
+          margin-bottom: 5px;
+          padding: 15px 30px;
+          background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjOWU5ZTllIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDVMNSAwWk02IDRMNCA2Wk0tMSAxTDEgLTFaIiBzdHJva2U9IiM4ODgiIHN0cm9rZS13aWR0aD0iMSI+PC9wYXRoPgo8L3N2Zz4=);
+          background-color: grey;
+        "
+      >
+        <iframe
+          #iframeElement
+          class="html-iframe"
+          style="width: 100%; height: 100%; z-index: 1; background-color: white"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</div>

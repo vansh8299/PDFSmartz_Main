@@ -1,0 +1,589 @@
+<div class="main">
+  <div class="first-section">
+    <div>
+      <span>{{ data.selectedfield }} Component</span>
+    </div>
+    <div><i class="fa fa-times" aria-hidden="true" mat-dialog-close></i></div>
+  </div>
+  <div class="second-section">
+    <div class="left">
+      <div class="header">
+        <div class="nav nav-tabs">
+          @for(l of headerlist; track l){
+          <div>
+            <span
+              class="nav-link"
+              (click)="setSelectedHeader(l)"
+              [ngClass]="selectedHeader == l ? 'active' : 'colorchange'"
+              >{{ l }}</span
+            >
+          </div>
+          }
+        </div>
+      </div>
+      <div class="data" [ngClass]="data.selectedfield=='Radio Button'||data.selectedfield=='Checkbox'?'changepadding':''">
+        @if(selectedHeader=='Display'){
+        <div>
+          <form [formGroup]="displayform">
+            <div class="row mb-3 ms-1 me-1">
+              <label
+                for="fontSize"
+                class="form-label"
+                style="color: #525151; padding-left: 4px"
+                >Font Size</label
+              >
+              <input
+                type="text"
+                id="fontSize"
+                class="form-control inputbox"
+                formControlName="fontSize"
+                (input)="formatFontSize($event)"
+                (keypress)="onFontSizeKeyPress($event)"
+                placeholder="Enter font size (e.g., 16)"
+              />
+              @if(displayform.get('fontSize')?.errors) {
+                @if(displayform.get('fontSize')?.errors?.['invalidFormat']) {
+                  <div class="text-danger">
+                    <small>*Please enter a valid number</small>
+                  </div>
+                }
+                @if(displayform.get('fontSize')?.errors?.['belowMin']) {
+                  <div class="text-danger">
+                    <small>*Font size cannot be less than 0.5px</small>
+                  </div>
+                }
+                @if(displayform.get('fontSize')?.errors?.['aboveMax']) {
+                  <div class="text-danger">
+                    <small>*Font size cannot be more than 40px</small>
+                  </div>
+                }
+              }
+            </div>
+            <!-- Placeholder input field -->
+            @if(data.selectedfield!='Signature' && data.selectedfield
+            !='Date/Time' && data.selectedfield!='Radio Button' &&
+            data.selectedfield!='Checkbox'){
+            <div class="row mb-3 ms-1 me-1">
+              <label
+                for="placeholder"
+                class="form-label"
+                style="color: #525151; padding-left: 4px"
+                >Placeholder</label
+              >
+              <input
+                type="text"
+                id="placeholder"
+                class="form-control inputbox"
+                placeholder="Placeholder"
+                formControlName="placeholder"
+              />
+            </div>
+            } @if(data.selectedfield=='Radio Button'){
+            <div class="row mb-3 ms-1 me-1" style="position:sticky;top:0px;background-color:white;z-index: 1000;padding-top: 20px;">
+              <mat-label
+                style="color: #525151; padding-left: 4px;"
+                class="form-label"
+                for="groupname"
+                >Radio Group Name</mat-label
+              >
+              <input
+                type="text"
+                matInput
+                formControlName="groupname"
+                placeholder="Ex.Gender"
+                class="form-control inputbox"
+                id="groupname"
+              />
+            </div>
+            <div class="row mb-3 ms-1 me-1" *ngIf="!radiopresent" style="position:sticky;top:85px;background-color:white; padding-bottom: 10px; z-index: 1000; padding-top: 10px;">
+              <span style="color: #525151; padding-left: 4px;"
+                >Add Your Options
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  (click)="addRadio()"
+                  width="23"
+                  height="23"
+                  fill="currentColor"
+                  class="bi bi-plus-circle-fill"
+                  viewBox="0 0 16 16"
+                  style="
+                    margin: 0px 2px 3px 2px;
+                    color: #2176cb;
+                    cursor: pointer;
+                  "
+                >
+                  <path
+                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"
+                  />
+                </svg>
+              </span>
+            </div>
+            <div formArrayName="groupradio">
+              <div
+                *ngFor="let radioform of groupradio.controls; let i = index"
+                [formGroupName]="i"
+              >
+                <div class="row mb-3 ms-1 me-1">
+                  <div style="color: #525151; padding-left: 4px" class="mb-2">
+                    <b>Option {{ i + 1 }}</b>
+                  </div>
+
+                  <div class="col">
+                    <div class="d-flex align-items-center">
+                      <label
+                        for="inputid"
+                        class="form-label mb-1"
+                        style="
+                          color: #525151;
+                          padding-left: 4px;
+                          margin-bottom: 1px;
+                        "
+                        >Id</label
+                      >
+                    </div>
+                    <input
+                      type="text"
+                      id="inputid"
+                      class="form-control opt"
+                      placeholder="Enter Unique Id"
+                      formControlName="radioid"
+                      #id
+                      (input)="changeId(id.value)"
+                    />
+                    <div *ngIf="radioform?.get('radioid')?.errors">
+                      <div
+                        *ngIf="radioform?.get('radioid')?.errors?.['required']"
+                        class="text-danger"
+                      >
+                        <small class="ms-2">*Id is required</small>
+                      </div>
+                      <div
+                        *ngIf="radioform?.get('radioid')?.errors?.['minlength']"
+                        class="text-danger"
+                      >
+                        <small class="ms-2"
+                          >*Id must be at least 3 characters long</small
+                        >
+                      </div>
+                      <div
+                        *ngIf="radioform?.get('radioid')?.errors?.['containsSpace']"
+                        class="text-danger"
+                      >
+                        <small class="ms-2"
+                          >*Spaces are not allowed in Id</small
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col">
+                    <label
+                      for="lable"
+                      class="form-label"
+                      style="
+                        color: #525151;
+                        padding-left: 4px;
+                        margin-bottom: 1px;
+                      "
+                      >Label</label
+                    >
+                    <div class="d-flex align-items-center">
+                      <!-- Added wrapper div -->
+                      <input
+                        type="text"
+                        id="label"
+                        class="form-control opt"
+                        placeholder="Enter Label"
+                        formControlName="label"
+                      />
+                      <svg
+                        *ngIf="!radiopresent"
+                        style="
+                          margin-left: 8px;
+                          color: #fa0004;
+                          cursor: pointer;
+                        "
+                        (click)="deleteradio(i)"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        fill="currentColor"
+                        class="bi bi-x-lg"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            } @if(data.selectedfield=='Checkbox'){
+            <div class="row mb-3 ms-1 me-1" style="position:sticky;top:0px;background-color:white;z-index: 1000;padding-top: 20px;">
+              <mat-label
+                style="color: #525151; padding-left: 4px"
+                class="form-label"
+                for="groupname"
+                >Check Group Name</mat-label
+              >
+              <input
+                type="text"
+                matInput
+                formControlName="groupname"
+                placeholder="Example- Vehicle"
+                class="form-control inputbox"
+                id="groupname"
+              />
+            </div>
+            <div class="row mb-3 ms-1 me-1" *ngIf="!checkpresent" style="position:sticky;top:85px;background-color:white; padding-bottom: 10px; z-index: 1000; padding-top: 10px;">
+              <span style="color: #525151; padding-left: 4px"
+                >Add Your Options
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  (click)="addCheck()"
+                  width="23"
+                  height="23"
+                  fill="currentColor"
+                  class="bi bi-plus-circle-fill"
+                  viewBox="0 0 16 16"
+                  style="
+                    margin: 0px 2px 3px 2px;
+                    color: #2176cb;
+                    cursor: pointer;
+                  "
+                >
+                  <path
+                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"
+                  />
+                </svg>
+              </span>
+            </div>
+            <div formArrayName="groupcheck">
+              <div
+                *ngFor="let checkform of groupcheck.controls; let i = index"
+                [formGroupName]="i"
+              >
+                <div class="row mb-3 ms-1 me-1">
+                  <div style="color: #525151; padding-left: 4px" class="mb-2">
+                    <b>Option {{ i + 1 }}</b>
+                  </div>
+
+                  <div class="col">
+                    <label
+                      for="inputid"
+                      class="form-label"
+                      style="
+                        color: #525151;
+                        padding-left: 4px;
+                        margin-bottom: 1px;
+                      "
+                      >Id</label
+                    >
+                    <input
+                      type="text"
+                      id="inputid"
+                      class="form-control opt"
+                      placeholder="Enter Unique Id"
+                      formControlName="checkid"
+                      #id
+                      (input)="changeId(id.value)"
+                    />
+                    <div *ngIf="checkform?.get('checkid')?.errors">
+                      <div
+                        *ngIf="checkform?.get('checkid')?.errors?.['required']"
+                        class="text-danger"
+                      >
+                        <small class="ms-2">*Id is required</small>
+                      </div>
+                      <div
+                        *ngIf="checkform?.get('checkid')?.errors?.['minlength']"
+                        class="text-danger"
+                      >
+                        <small class="ms-2"
+                          >*Id must be at least 3 characters long</small
+                        >
+                      </div>
+                      <div
+                        *ngIf="checkform?.get('checkid')?.errors?.['containsSpace']"
+                        class="text-danger"
+                      >
+                        <small class="ms-2"
+                          >*Spaces are not allowed in Id</small
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col">
+                    <label
+                      for="lable"
+                      class="form-label"
+                      style="
+                        color: #525151;
+                        padding-left: 4px;
+                        margin-bottom: 1px;
+                      "
+                      >Label</label
+                    >
+                    <div class="d-flex align-items-center">
+                      <input
+                        type="text"
+                        id="label"
+                        class="form-control opt mt-n3"
+                        placeholder="Enter Label"
+                        formControlName="checklabel"
+                      />
+                      <svg
+                        *ngIf="!checkpresent"
+                        style="
+                          margin-left: 8px;
+                          color: #fa0004;
+                          cursor: pointer;
+                        "
+                        (click)="deletecheck(i)"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        fill="currentColor"
+                        class="bi bi-x-lg"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            } @if(data.selectedfield!='Radio Button' &&
+            data.selectedfield!='Checkbox'){
+            <div class="row mb-3 ms-1 me-1">
+              <label
+                for="inputid"
+                class="form-label"
+                style="color: #525151; padding-left: 4px"
+                >{{ data.selectedfield }} Id</label
+              >
+              <input
+                type="text"
+                id="inputid"
+                class="form-control inputbox"
+                placeholder="Enter Unique Id"
+                formControlName="id"
+              />
+              @if(id?.errors){ @if(id?.errors?.['required']){
+              <div class="text-danger"><small>*Id is required</small></div>
+              } @if(id?.errors?.['minlength']){
+              <div class="text-danger">
+                <small>*Id must be at least 3 characters long</small>
+              </div>
+              } @if(id?.errors?.['containsSpace']){
+              <div class="text-danger">
+                <small>*Spaces are not allowed in Id</small>
+              </div>
+              } @if(id?.errors?.['idExists']){
+              <div class="text-danger"><small>*Id must be unique</small></div>
+              } }
+            </div>
+
+            }
+          </form>
+        </div>
+        } @if(selectedHeader=='Validation'){
+        <div>
+          <form [formGroup]="validationform">
+            <div class="row mb-3 ms-1 me-1">
+              <label
+                for="minlength"
+                class="form-label"
+                style="color: #525151; padding-left: 4px"
+                >Minimum Length</label
+              >
+              <input
+                type="number"
+                id="minlength"
+                class="form-control inputbox"
+                placeholder="Minimum Length"
+                formControlName="minlength"
+              />
+            </div>
+            <div class="row mb-3 ms-1 me-1">
+              <label
+                for="maxlength"
+                class="form-label"
+                style="color: #525151; padding-left: 4px"
+                >Maximum Length</label
+              >
+              <input
+                type="number"
+                id="maxlength"
+                class="form-control inputbox"
+                placeholder="Maximum Length"
+                formControlName="maxlength"
+              />
+            </div>
+          </form>
+        </div>
+        }
+      </div>
+    </div>
+    <div class="right"   *ngIf="
+    data.selectedfield != 'Radio Button' &&
+    data.selectedfield != 'Checkbox'
+  ">
+      <div class="top-right">
+        <div class="header2">
+          <span>Preview</span>
+        </div>
+        <div
+          class="data2"
+        
+        >
+          <div class="items item1">{{ data.selectedfield }}</div>
+          <div class="items item2">
+            <input
+              class="inputbox"
+              [placeholder]="displayform.get('placeholder')?.value"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="bottom-right">
+        <div>
+          <button
+            type="button"
+            class="btn btn-primary"
+            style="
+              color: #fff;
+              background-color: #2176cb;
+              border-color: #2176cb;
+              margin-right: 10px;
+            "
+            (click)="doAction('Save')"
+            [disabled]="!isFormValid()"
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            style="
+              color: #fff;
+              background-color: #373a36;
+              border-color: #373a36;
+              margin-right: 10px;
+            "
+            (click)="doAction('Cancel')"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            style="
+              color: #fff;
+              background-color: #cc4d50;
+              border-color: #cc4d50;
+            "
+            (click)="doAction('Remove')"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="right-two"   *ngIf="
+    data.selectedfield == 'Radio Button' ||
+    data.selectedfield == 'Checkbox'
+  ">
+      <div class="top-right-two">
+        <div class="header2">
+          <span>Preview</span>
+        </div>
+        <div
+          class="data2-two"
+        
+        >
+          <div class="items item1">{{ data.selectedfield }}</div>
+          <div class="items item2-two">
+            @if(groupradio.value.length>0){
+              @for(radio of groupradio.value;track radio){
+                @if(radio.label!=''){
+                  <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-circle me-2" viewBox="0 0 16 16">
+                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    </svg><span>{{radio.label}}</span>
+                  </div>
+                }
+                
+              }
+              
+            }
+            @else{
+              @for(checkbox of groupcheck.value;track checkbox){
+                @if(checkbox.checklabel!=''){
+                  <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-square me-2" viewBox="0 0 16 16">
+                      <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+                    </svg><span>{{checkbox.checklabel}}</span>
+                  </div>
+                }
+                
+              }
+            }
+           
+          </div>
+        </div>
+      </div>
+      <div class="bottom-right">
+        <div>
+          <button
+            type="button"
+            class="btn btn-primary"
+            style="
+              color: #fff;
+              background-color: #2176cb;
+              border-color: #2176cb;
+              margin-right: 10px;
+            "
+            (click)="doAction('Save')"
+            [disabled]="!isFormValid()"
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            style="
+              color: #fff;
+              background-color: #373a36;
+              border-color: #373a36;
+              margin-right: 10px;
+            "
+            (click)="doAction('Cancel')"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            style="
+              color: #fff;
+              background-color: #cc4d50;
+              border-color: #cc4d50;
+            "
+            (click)="doAction('Remove')"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

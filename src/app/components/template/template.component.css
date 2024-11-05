@@ -1,0 +1,16 @@
+.main {
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  padding: 40px;
+}
+.mat-mdc-table {
+  background-color:white;
+}
+
+.mat-row {
+  border-top: 1px solid #fffbfb;
+}  
+::ng-deep .custom-header-row {
+  border-bottom: 2px solid #0284d0; /* Blue color */
+}
