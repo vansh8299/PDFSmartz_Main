@@ -399,7 +399,7 @@
             }
             @if(data.selectedfield=='Select'){
               <div class="row mb-3 ms-1 me-1" style="position:sticky;top:0px;background-color:white;z-index: 1000;">
-               
+                <!-- No changes here -->
               </div>
             
               <div class="row mb-3 ms-1 me-1" style="position:sticky;top:85px;background-color:white; padding-bottom: 10px; z-index: 1000; padding-top: 10px;">
@@ -420,59 +420,61 @@
                 </span>
               </div>
             
-              <div formArrayName="selectOptions">
-                <div
-                  *ngFor="let optionForm of selectOptions.controls; let i = index"
-                  [formGroupName]="i"
-                >
-                  <div class="row mb-3 ms-1 me-1">
-                    <div style="color: #525151; padding-left: 4px" class="mb-2">
-                      <b>Option {{ i + 1 }}</b>
-                    </div>
-            
-                    <div class="col">
-                      <label
-                        class="form-label"
-                        style="color: #525151; padding-left: 4px; margin-bottom: 1px;"
-                      >Display Text</label>
-                      <input
-                        type="text"
-                        class="form-control opt"
-                        placeholder="Enter Display Text"
-                        formControlName="data"
-                      />
-                      <div *ngIf="optionForm?.get('data')?.errors?.['required'] && optionForm?.get('data')?.touched">
-                        <small class="text-danger ms-2">*Display text is required</small>
+              <div class="row mb-3 ms-1 me-1" style="max-height: 300px; overflow-y: auto;">
+                <div formArrayName="selectOptions">
+                  <div
+                    *ngFor="let optionForm of selectOptions.controls; let i = index"
+                    [formGroupName]="i"
+                  >
+                    <div class="row mb-3">
+                      <div style="color: #525151; padding-left: 4px" class="mb-2">
+                        <b>Option {{ i + 1 }}</b>
                       </div>
-                    </div>
             
-                    <div class="col">
-                      <label
-                        class="form-label"
-                        style="color: #525151; padding-left: 4px; margin-bottom: 1px;"
-                      >Value</label>
-                      <div class="d-flex align-items-center">
+                      <div class="col">
+                        <label
+                          class="form-label"
+                          style="color: #525151; padding-left: 4px; margin-bottom: 1px;"
+                        >Display Text</label>
                         <input
                           type="text"
                           class="form-control opt"
-                          placeholder="Enter Value"
-                          formControlName="value"
+                          placeholder="Enter Display Text"
+                          formControlName="data"
                         />
-                        <svg
-                          style="margin-left: 8px; color: #fa0004; cursor: pointer;"
-                          (click)="deleteSelectOption(i)"
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          fill="currentColor"
-                          class="bi bi-x-lg"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
-                        </svg>
+                        <div *ngIf="optionForm?.get('data')?.errors?.['required'] && optionForm?.get('data')?.touched">
+                          <small class="text-danger ms-2">*Display text is required</small>
+                        </div>
                       </div>
-                      <div *ngIf="optionForm?.get('value')?.errors?.['required'] && optionForm?.get('value')?.touched">
-                        <small class="text-danger ms-2">*Value is required</small>
+            
+                      <div class="col">
+                        <label
+                          class="form-label"
+                          style="color: #525151; padding-left: 4px; margin-bottom: 1px;"
+                        >Value</label>
+                        <div class="d-flex align-items-center">
+                          <input
+                            type="text"
+                            class="form-control opt"
+                            placeholder="Enter Value"
+                            formControlName="value"
+                          />
+                          <svg
+                            style="margin-left: 8px; color: #fa0004; cursor: pointer;"
+                            (click)="deleteSelectOption(i)"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            fill="currentColor"
+                            class="bi bi-x-lg"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                          </svg>
+                        </div>
+                        <div *ngIf="optionForm?.get('value')?.errors?.['required'] && optionForm?.get('value')?.touched">
+                          <small class="text-danger ms-2">*Value is required</small>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -597,50 +599,50 @@
       <div class="data2-two">
         <div class="items item1">{{ data.selectedfield }}</div>
         <div class="items item2-two">
-          @if(data.selectedfield == 'Select' && selectOptions.value.length >
-          0) {
-          <div class="d-flex align-items-center mb-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              fill="currentColor"
-              class="bi bi-chevron-right me-2"
-              viewBox="0 0 16 16"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
-              />
-            </svg>
-
-            <!-- Bootstrap Dropdown with white background -->
-            <div class="dropdown">
-              <button
-                class="btn dropdown-toggle"
-                type="button"
-                id="dropdownMenuButton"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                style="background-color: white; border: 1px solid #060606"
+           @if(data.selectedfield == 'Select' && selectOptions.value.length >
+            0) {
+            <div class="d-flex align-items-center mb-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                fill="currentColor"
+                class="bi bi-chevron-right me-2"
+                viewBox="0 0 16 16"
               >
-                {{ displayform.get("placeholder")?.value }}
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <!-- Dynamically populated options -->
-                @for(option of selectOptions.value; track option) {
-                @if(option.data != '') {
-                <li>
-                  <a class="dropdown-item" href="#" :value="option.value">{{
-                    option.data
-                  }}</a>
-                </li>
-                } }
-              </ul>
-            </div>
-          </div>
+                <path
+                  fill-rule="evenodd"
+                  d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
+                />
+              </svg>
 
-          }
+              <!-- Bootstrap Dropdown with white background -->
+              <div class="dropdown">
+                <button
+                  class="btn dropdown-toggle"
+                  type="button"
+                  id="dropdownMenuButton"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  style="background-color: white; border: 1px solid #060606"
+                >
+                  {{ displayform.get("placeholder")?.value }}
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <!-- Dynamically populated options -->
+                  @for(option of selectOptions.value; track option) {
+                  @if(option.data != '') {
+                  <li>
+                    <a class="dropdown-item" href="#" :value="option.value">{{
+                      option.data
+                    }}</a>
+                  </li>
+                  } }
+                </ul>
+              </div>
+            </div>
+
+            }
           @else if(groupradio.value.length > 0){
             @for(radio of groupradio.value; track radio){
               @if(radio.label != ''){
