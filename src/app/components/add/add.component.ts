@@ -83,7 +83,7 @@ export class AddComponent implements AfterViewInit {
     { icon: 'fa fa-pencil', name: 'Signature' },
     { icon: 'fa fa-circle', name: 'Radio Button' },
     { icon: 'fa fa-check-square', name: 'Checkbox' },
-    { icon: 'fa fa-check-square', name: 'Select' },
+    { icon: 'fa fa-caret-down', name: 'Select' },
   ];
 
   // field() {
@@ -150,9 +150,9 @@ export class AddComponent implements AfterViewInit {
       groupname: null,
       groupradio: null,
       groupcheck: null,
-      selectOptions: [], 
+      selectOptions: [],
       id: '',
-      fontSize: '16px', 
+      fontSize: '16px',
     };
     const newevent = {
       dataTransfer: {
@@ -172,7 +172,7 @@ export class AddComponent implements AfterViewInit {
         }`,
         all_elements: this.modalDataMap,
         current_element_data: currentModalData,
-        current_element_id: currentElementId
+        current_element_id: currentElementId,
       },
     });
 
@@ -508,11 +508,11 @@ export class AddComponent implements AfterViewInit {
         const selectElement = iframeDocument.createElement(
           'select'
         ) as HTMLSelectElement;
-        
+
         // Set basic attributes
         selectElement.setAttribute('id', modalData?.id || '');
         selectElement.setAttribute('readonly', 'true');
-        
+
         // Apply similar styling
         selectElement.style.width = '100%';
         selectElement.style.height = '100%';
@@ -522,7 +522,7 @@ export class AddComponent implements AfterViewInit {
         selectElement.style.backgroundColor = '#fbdeb8';
         selectElement.style.boxSizing = 'border-box';
         selectElement.style.fontSize = modalData?.fontSize || '16px';
-        
+
         // Add options from modalData
         if (modalData) {
           // Add default/placeholder option if specified
@@ -534,11 +534,10 @@ export class AddComponent implements AfterViewInit {
             placeholderOption.selected = true;
             selectElement.appendChild(placeholderOption);
           }
-          
+
           // Add all other options
-      
         }
-        
+
         // Add change event listener
         selectElement.addEventListener('change', (event) => {
           const data = event.target as HTMLSelectElement;
@@ -546,7 +545,7 @@ export class AddComponent implements AfterViewInit {
           this.checkvalidation(data, modalData, container, divError);
           selectElement.setAttribute('value', data.value);
         });
-        
+
         container.appendChild(selectElement);
         break;
       }
@@ -742,9 +741,8 @@ export class AddComponent implements AfterViewInit {
         select.style.border = '1px solid #ccc';
         select.style.borderRadius = '4px';
         select.style.backgroundColor = '#fbdeb8';
-        select.style.cursor = 'not-allowed';
+
         select.style.opacity = '0.7';
-       
 
         // Add placeholder option if exists
         if (modalData?.placeholder) {
@@ -752,13 +750,13 @@ export class AddComponent implements AfterViewInit {
           placeholderOption.value = '';
           placeholderOption.textContent = modalData.placeholder;
           placeholderOption.selected = true;
-         
+
           select.appendChild(placeholderOption);
         }
 
         // Add options from modalData
         if (modalData?.selectOptions) {
-          modalData.selectOptions.forEach(option => {
+          modalData.selectOptions.forEach((option) => {
             const optionElement = iframeDocument.createElement('option');
             optionElement.value = option.value;
             optionElement.textContent = option.data;
@@ -954,10 +952,10 @@ export class AddComponent implements AfterViewInit {
         element.setAttribute(
           'id',
           this.modalDataMap.get(currentElementId)?.id || ''
-        );element.style.fontSize =
-        this.modalDataMap.get(currentElementId)?.fontSize || '16px';
-    
-        
+        );
+        element.style.fontSize =
+          this.modalDataMap.get(currentElementId)?.fontSize || '16px';
+
         if (element.tagName.toLowerCase() === 'select') {
           // Clear existing options
           while (element.firstChild) {
@@ -965,7 +963,7 @@ export class AddComponent implements AfterViewInit {
           }
 
           // Add new options
-          currentModalData.selectOptions?.forEach(option => {
+          currentModalData.selectOptions?.forEach((option) => {
             const optElement = document.createElement('option');
             optElement.value = option.value;
             optElement.textContent = option.data;
@@ -976,7 +974,7 @@ export class AddComponent implements AfterViewInit {
           element.setAttribute('id', currentModalData.id || '');
           element.style.fontSize = currentModalData.fontSize || '16px';
         }
-      
+
         if (element.type == 'checkbox') {
           element.setAttribute(
             'name',
@@ -995,7 +993,7 @@ export class AddComponent implements AfterViewInit {
             'id',
             this.modalDataMap.get(currentElementId)?.id || ''
           );
-        
+
           for (let [key, value] of this.modalDataMap) {
             if (
               value.groupname ==
@@ -1007,7 +1005,8 @@ export class AddComponent implements AfterViewInit {
           }
           if (label) {
             label.textContent = data.checklabel;
-            label.style.fontSize = this.modalDataMap.get(currentElementId)?.fontSize || '16px';
+            label.style.fontSize =
+              this.modalDataMap.get(currentElementId)?.fontSize || '16px';
           }
         } else if (element.type == 'radio') {
           element.setAttribute(
@@ -1027,7 +1026,7 @@ export class AddComponent implements AfterViewInit {
             'id',
             this.modalDataMap.get(currentElementId)?.id || ''
           );
-        
+
           for (let [key, value] of this.modalDataMap) {
             if (
               value.groupname ==
@@ -1039,7 +1038,8 @@ export class AddComponent implements AfterViewInit {
           }
           if (label) {
             label.textContent = data.label;
-            label.style.fontSize = this.modalDataMap.get(currentElementId)?.fontSize || '16px';
+            label.style.fontSize =
+              this.modalDataMap.get(currentElementId)?.fontSize || '16px';
           }
         }
       }
@@ -1244,18 +1244,24 @@ export class AddComponent implements AfterViewInit {
     //     };
     //   },
     // });
-    const filename=this.filename.split('.')[0];
-        const iframe = this.iframeElement.nativeElement;
+    const filename = this.filename.split('.')[0];
+    const iframe = this.iframeElement.nativeElement;
     const iframeDocument =
       iframe.contentDocument || iframe.contentWindow.document;
     const divContent = iframeDocument.getElementsByClassName('all-inputs')[0];
-    if(filename&& this.selectedFormType){
-      this.data.createNewForm(filename,this.selectedFormType,"AC30A360-3463-4A3F-A8B1-D89315BA2BD3",divContent.outerHTML).subscribe({
-        next:(data:any)=>{
-          console.log(data);
-          
-        }
-      })
+    if (filename && this.selectedFormType) {
+      this.data
+        .createNewForm(
+          filename,
+          this.selectedFormType,
+          'AC30A360-3463-4A3F-A8B1-D89315BA2BD3',
+          divContent.outerHTML
+        )
+        .subscribe({
+          next: (data: any) => {
+            console.log(data);
+          },
+        });
       const snackBarRef = this.snackBar.open(
         'Form created successfully!',
         'Close',
@@ -1266,12 +1272,11 @@ export class AddComponent implements AfterViewInit {
           panelClass: ['success-snackbar'],
         }
       );
-  
+
       // Navigate after the snackbar duration completes
       snackBarRef.afterDismissed().subscribe(() => {
         this.router.navigate(['/template']);
       });
     }
-
   }
 }
