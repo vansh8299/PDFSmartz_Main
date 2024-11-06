@@ -1,80 +1,59 @@
 import { DataSource, SelectionModel } from '@angular/cdk/collections';
-import { NgClass, NgStyle } from '@angular/common';
+import { NgClass, NgIf, NgStyle } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { DataService } from '../../services/data.service';
-interface FormData {
-  name: string;
-  formtype: string;
-  modified: string;
-}
+import { RouterModule } from '@angular/router';
+import { DatePipe } from '@angular/common';
 
-const FORM_DATA: FormData[] = [
-  {
-    name: 'Client Intake Form',
-    formtype: 'Client Form',
-    modified: '2024-01-15',
-  },
-  {
-    name: 'Caregiver Assessment',
-    formtype: 'Assessment Form',
-    modified: '2024-01-10',
-  },
-  {
-    name: 'Incident Report',
-    formtype: 'Caregiver Form',
-    modified: '2024-01-03',
-  },
-  { name: 'Client Feedback', formtype: 'Client Form', modified: '2024-01-02' },
-  {
-    name: 'Caregiver Application',
-    formtype: 'Caregiver Form',
-    modified: '2024-01-01',
-  },
-  {
-    name: 'Health Assessment',
-    formtype: 'Assessment Form',
-    modified: '2023-12-25',
-  },
-  {
-    name: 'Client Progress Report',
-    formtype: 'Client Form',
-    modified: '2023-12-10',
-  },
-  {
-    name: 'Caregiver Evaluation',
-    formtype: 'Assessment Form',
-    modified: '2023-12-15',
-  },
-];
 @Component({
   selector: 'app-template',
   standalone: true,
-  imports: [MatTableModule, MatSortModule, NgStyle, NgClass, MatCheckboxModule],
+  imports: [
+    MatTableModule,
+    MatSortModule,
+    NgStyle,
+    NgClass,
+    MatCheckboxModule,
+    NgIf,
+    RouterModule,
+    DatePipe
+  ],
   templateUrl: './template.component.html',
   styleUrl: './template.component.css',
 })
 export class TemplateComponent {
-  constructor(private data:DataService){}
+  constructor(private data: DataService) {}
   displayedColumns: string[] = [
     'select',
     'name',
-    'formtype',
-    'modified',
+    'type',
+    'createdOn',
     'status',
     'action',
   ];
-  dataSource = new MatTableDataSource(FORM_DATA);
 
   @ViewChild(MatSort) sort!: MatSort;
- 
+  dataSource!: any;
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
+    if (this.dataSource) {
+      this.dataSource.sort = this.sort;
+    }
+  }
+  ngOnInit() {
+    this.data.getPdfForms().subscribe({
+      next: (data: any) => {
+        this.dataSource = new MatTableDataSource(data);
+      },
+    });
   }
   selection = new SelectionModel<FormData>(true, []);
   isAllSelected() {
+    if (!this.dataSource || !this.dataSource.data) {
+      return false;
+    }
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
@@ -90,6 +69,9 @@ export class TemplateComponent {
   }
 
   checkboxLabel(row?: FormData): string {
+    if (!this.dataSource || !this.dataSource.data) {
+      return '';
+    }
     if (!row) {
       return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
     }

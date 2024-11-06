@@ -59,8 +59,11 @@ export class DataService {
       responseType: 'blob' as 'json',
     });
   }
-  createNewForm(name:string,type:string,createdby:string,divcontent:string):Observable<any>{
-    return this.http.post<any>(`${this.createnewform}/Name=${name}&Type=${type}&CreatedBy=${createdby}&DivContent=${divcontent}`,{})
+  createNewForm(name:string,pdfname:string,type:string,createdby:string,divcontent:string):Observable<any>{
+    if(divcontent==''){
+      return this.http.post<any>(`${this.createnewform}?Name=${name}&Type=${type}&CreatedBy=${createdby}&PdfName=${pdfname}`,{})
+    }
+    return this.http.post<any>(`${this.createnewform}?Name=${name}&Type=${type}&CreatedBy=${createdby}&PdfName=${pdfname}&DivContent=${divcontent}`,{})
   }
   getPdfForms():Observable<any>{
     return this.http.get<any>(this.getforms)

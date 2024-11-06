@@ -48,12 +48,9 @@ export class InputModalComponent {
   checkpresent: boolean = false;
   headerlist: string[] = [
     'Display',
-    // 'Data',
+    
     'Validation',
-    // 'API',
-    // 'Conditional',
-    // 'Logic',
-    // 'Layout',
+   
   ];
   selectedHeader: string = 'Display';
   setSelectedHeader(data: string) {

@@ -1,6 +1,11 @@
 <div class="main">
+  <div>
+    <button style="background-color: #0284d0; color: white; margin-top: -10px; margin-bottom: 10px;" routerLink="/dashboard" class="btn"><svg xmlns="http://www.w3.org/2000/svg" style="margin-right: 5px; color:white;margin-bottom:5px" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+    </svg> Back</button>
+  </div>
   <h3 style="margin-bottom: 10px;">Custom Form</h3>
-  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z0">
+  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z0" *ngIf="dataSource">
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>
         <mat-checkbox
@@ -40,12 +45,12 @@
       </td>
     </ng-container>
 
-    <ng-container matColumnDef="formtype">
+    <ng-container matColumnDef="type">
       <th mat-header-cell *matHeaderCellDef>Form Type</th>
-      <td mat-cell *matCellDef="let element">{{ element.formtype }}</td>
+      <td mat-cell *matCellDef="let element">{{ element.type }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="modified">
+    <ng-container matColumnDef="createdOn">
       <th
         mat-header-cell
         *matHeaderCellDef
@@ -54,7 +59,7 @@
       >
         Modified
       </th>
-      <td mat-cell *matCellDef="let element">{{ element.modified }}</td>
+      <td mat-cell *matCellDef="let element">{{ element.createdOn | date:'dd-MM-yyyy HH:mm'}}</td>
     </ng-container>
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef>Status</th>

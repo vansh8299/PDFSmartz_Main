@@ -12,19 +12,17 @@ import { CommonModule, NgClass } from '@angular/common';
 import { DataService } from '../../services/data.service';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { FormioModule } from '@formio/angular';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { InputModalComponent } from '../input-modal/input-modal.component';
 import { Modal } from '../modal';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
-  ActivatedRoute,
-  NavigationExtras,
+ 
   Router,
   RouterModule,
 } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-// import * as pdfjsLib from 'pdfjs-dist';
-// import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+
 @Component({
   selector: 'app-add',
   standalone: true,
@@ -46,6 +44,7 @@ import { FormsModule } from '@angular/forms';
 export class AddComponent implements AfterViewInit {
   formTitle: string = '';
   formName: string = '';
+  loading:boolean=false;
   constructor(
     private snackBar: MatSnackBar,
     private data: DataService,
@@ -86,20 +85,14 @@ export class AddComponent implements AfterViewInit {
     { icon: 'fa fa-caret-down', name: 'Select' },
   ];
 
-  // field() {
-  //   this.clicked = true;
-  //   this.showfields = !this.showfields;
-  // }
+  
 
   getpdfdata() {
     if (this.pdfHtml) {
       // Set the srcdoc of the iframe to the retrieved HTML content
       this.iframeElement.nativeElement.srcdoc = this.pdfHtml;
-      console.log('PDF HTML loaded into iframe.');
-    } else {
-      console.error('Error in Uploading PDF.');
-      // Optionally reload or retry logic if needed
-    }
+     
+    } 
   }
 
   @ViewChild('iframeElement', { static: true }) iframeElement!: ElementRef;
@@ -150,9 +143,8 @@ export class AddComponent implements AfterViewInit {
       groupname: null,
       groupradio: null,
       groupcheck: null,
-      selectOptions: [],
       id: '',
-      fontSize: '16px',
+      fontSize: '16px', 
     };
     const newevent = {
       dataTransfer: {
@@ -172,7 +164,7 @@ export class AddComponent implements AfterViewInit {
         }`,
         all_elements: this.modalDataMap,
         current_element_data: currentModalData,
-        current_element_id: currentElementId,
+        current_element_id: currentElementId
       },
     });
 
@@ -202,7 +194,7 @@ export class AddComponent implements AfterViewInit {
           }
         }
         if (result.validation) {
-          console.log(result.validation);
+         
           if (result.validation.minlength) {
             currentModalData.minlength = result.validation.minlength || null;
           }
@@ -223,7 +215,7 @@ export class AddComponent implements AfterViewInit {
             newevent.dataTransfer.yval = (
               Number(newevent.dataTransfer.yval) + 20
             ).toString();
-            console.log(currentElementId);
+            
             this.onDrop(newevent, iframeDocument, currentElementId, index);
           });
         } else if (newevent.dataTransfer.text?.substring(4) == 'Checkbox') {
@@ -238,7 +230,7 @@ export class AddComponent implements AfterViewInit {
             newevent.dataTransfer.yval = (
               Number(newevent.dataTransfer.yval) + 20
             ).toString();
-            console.log(currentElementId);
+            
             this.onDrop(newevent, iframeDocument, currentElementId, index);
           });
         } else {
@@ -264,9 +256,9 @@ export class AddComponent implements AfterViewInit {
     currentElementId: string,
     index: any
   ) {
-    console.log(index);
+   
 
-    // event.preventDefault();
+   
     const data = event.dataTransfer?.text;
     if (!data) return;
     const xval = Number(event.dataTransfer?.xval);
@@ -276,12 +268,10 @@ export class AddComponent implements AfterViewInit {
     const scrollLeft =
       iframeDocument.documentElement.scrollLeft ||
       iframeDocument.body.scrollLeft;
-    // const scrollTop =
-    //   iframeDocument.documentElement.scrollTop || iframeDocument.body.scrollTop;
-    // console.log(scrollTop);
+    
     const x = event.clientX - rect.left + scrollLeft - xval;
     const y = event.clientY - rect.top - yval;
-    console.log(y);
+ 
     if (data.startsWith('new:')) {
       const type = data.substring(4); // Remove 'new:' prefix
       this.createDraggableInput(
@@ -315,7 +305,7 @@ export class AddComponent implements AfterViewInit {
     container.style.left = `${x}px`;
     container.style.top = `${y}px`;
     container.style.width = '150px'; // Default size
-    // container.style.height = '20px';
+    
     // Disable native resizable functionality
     container.style.resize = 'none';
 
@@ -323,7 +313,7 @@ export class AddComponent implements AfterViewInit {
 
     container.style.minWidth = '20px';
     container.style.minHeight = '10px';
-    // container.style.overflow = 'auto';
+    
     container.style.boxSizing = 'border-box';
     container.setAttribute('draggable', 'true');
     container.id = currentElementId;
@@ -401,7 +391,7 @@ export class AddComponent implements AfterViewInit {
         emailElement.style.backgroundColor = '#fbdeb8';
         emailElement.style.boxSizing = 'border-box'; // Adjust for padding/border
         emailElement.style.resize = 'none'; // Disable resizing for input directly
-        // container.dataset['placeholder'] = placeholderValue;
+        
         emailElement.setAttribute('id', modalData?.id || '');
         emailElement.style.fontSize = modalData?.fontSize || '16px';
         emailElement.addEventListener('input', (val) => {
@@ -471,7 +461,7 @@ export class AddComponent implements AfterViewInit {
 
           numberElement.setAttribute('value', data.value);
         });
-        // container.dataset['placeholder'] = placeholderValue;
+        
 
         container.appendChild(numberElement);
         break;
@@ -493,7 +483,7 @@ export class AddComponent implements AfterViewInit {
         inputElement.style.resize = 'none'; // Disable resizing for input directly
         inputElement.setAttribute('id', modalData?.id || '');
         inputElement.style.fontSize = modalData?.fontSize || '16px';
-        // container.dataset['placeholder'] = placeholderValue;
+   
         inputElement.placeholder = modalData?.placeholder || '';
         inputElement.addEventListener('input', (val) => {
           const data = val.target as HTMLInputElement;
@@ -504,51 +494,7 @@ export class AddComponent implements AfterViewInit {
         container.appendChild(inputElement);
         break;
       }
-      case 'SelectField': {
-        const selectElement = iframeDocument.createElement(
-          'select'
-        ) as HTMLSelectElement;
 
-        // Set basic attributes
-        selectElement.setAttribute('id', modalData?.id || '');
-        selectElement.setAttribute('readonly', 'true');
-
-        // Apply similar styling
-        selectElement.style.width = '100%';
-        selectElement.style.height = '100%';
-        selectElement.style.padding = '4px';
-        selectElement.style.outline = 'none';
-        selectElement.style.border = 'none';
-        selectElement.style.backgroundColor = '#fbdeb8';
-        selectElement.style.boxSizing = 'border-box';
-        selectElement.style.fontSize = modalData?.fontSize || '16px';
-
-        // Add options from modalData
-        if (modalData) {
-          // Add default/placeholder option if specified
-          if (modalData.placeholder) {
-            const placeholderOption = iframeDocument.createElement('option');
-            placeholderOption.value = '';
-            placeholderOption.text = modalData.placeholder;
-            placeholderOption.disabled = true;
-            placeholderOption.selected = true;
-            selectElement.appendChild(placeholderOption);
-          }
-
-          // Add all other options
-        }
-
-        // Add change event listener
-        selectElement.addEventListener('change', (event) => {
-          const data = event.target as HTMLSelectElement;
-          modalData = this.modalDataMap.get(currentElementId);
-          this.checkvalidation(data, modalData, container, divError);
-          selectElement.setAttribute('value', data.value);
-        });
-
-        container.appendChild(selectElement);
-        break;
-      }
       case 'Phone Number': {
         const phoneElement = iframeDocument.createElement(
           'input'
@@ -566,7 +512,7 @@ export class AddComponent implements AfterViewInit {
         phoneElement.style.resize = 'none'; // Disable resizing for input directly
         phoneElement.setAttribute('id', modalData?.id || '');
         phoneElement.style.fontSize = modalData?.fontSize || '16px';
-        // container.dataset['placeholder'] = placeholderValue;
+      
         phoneElement.addEventListener('input', (val) => {
           const data = val.target as HTMLInputElement;
           modalData = this.modalDataMap.get(currentElementId);
@@ -624,7 +570,7 @@ export class AddComponent implements AfterViewInit {
         textAreaInput.style.border = 'none';
         textAreaInput.style.backgroundColor = '#fbdeb8';
         textAreaInput.style.boxSizing = 'border-box'; // Adjust for padding/border
-        // Removed resize property for textarea as it already has its own resizable functionality
+       
         textAreaInput.setAttribute('id', modalData?.id || '');
         textAreaInput.style.fontSize = modalData?.fontSize || '16px';
         textAreaInput.placeholder = modalData?.placeholder || '';
@@ -658,7 +604,7 @@ export class AddComponent implements AfterViewInit {
         // Add disabled and readonly attributes
         checkInput.disabled = true;
         checkInput.setAttribute('readonly', 'true');
-        // Optional: Add a visual indicator that it's readonly
+       
         checkInput.style.cursor = 'not-allowed';
         checkInput.style.opacity = '0.7';
 
@@ -673,7 +619,7 @@ export class AddComponent implements AfterViewInit {
         label.textContent = modalData?.groupcheck[index].checklabel;
         label.style.fontSize = modalData?.fontSize || '16px';
         label.style.flexGrow = '1';
-        // Optional: Style the label to match the disabled state
+    
         label.style.cursor = 'not-allowed';
         label.style.opacity = '0.7';
 
@@ -703,7 +649,7 @@ export class AddComponent implements AfterViewInit {
         // Add disabled and readonly attributes
         radioInput.disabled = true;
         radioInput.setAttribute('readonly', 'true');
-        // Optional: Add a visual indicator that it's readonly
+  
         radioInput.style.cursor = 'not-allowed';
         radioInput.style.opacity = '0.7';
 
@@ -718,53 +664,13 @@ export class AddComponent implements AfterViewInit {
         label.textContent = modalData?.groupradio[index].label;
         label.style.fontSize = modalData?.fontSize || '16px';
         label.style.flexGrow = '1';
-        // Optional: Style the label to match the disabled state
+       
         label.style.cursor = 'not-allowed';
         label.style.opacity = '0.7';
 
         container.appendChild(radioInput);
         container.appendChild(label);
 
-        break;
-      }
-      case 'Select': {
-        container.style.display = 'block';
-        container.style.resize = 'both';
-        container.style.overflow = 'hidden';
-        container.style.width = '200px';
-        container.style.minWidth = '100px';
-
-        const select = iframeDocument.createElement('select');
-        select.style.width = '100%';
-        select.style.padding = '5px';
-        select.style.fontSize = modalData?.fontSize || '16px';
-        select.style.border = '1px solid #ccc';
-        select.style.borderRadius = '4px';
-        select.style.backgroundColor = '#fbdeb8';
-
-        select.style.opacity = '0.7';
-
-        // Add placeholder option if exists
-        if (modalData?.placeholder) {
-          const placeholderOption = iframeDocument.createElement('option');
-          placeholderOption.value = '';
-          placeholderOption.textContent = modalData.placeholder;
-          placeholderOption.selected = true;
-
-          select.appendChild(placeholderOption);
-        }
-
-        // Add options from modalData
-        if (modalData?.selectOptions) {
-          modalData.selectOptions.forEach((option) => {
-            const optionElement = iframeDocument.createElement('option');
-            optionElement.value = option.value;
-            optionElement.textContent = option.data;
-            select.appendChild(optionElement);
-          });
-        }
-
-        container.appendChild(select);
         break;
       }
       case 'Signature': {
@@ -802,8 +708,7 @@ export class AddComponent implements AfterViewInit {
         // Get context for display purposes only
         const context = canvas.getContext('2d');
 
-        // Remove all drawing-related event listeners
-        // Keep only the resize functionality
+   
 
         // Function to resize canvas based on the container's size
         const resizeCanvas = () => {
@@ -838,7 +743,49 @@ export class AddComponent implements AfterViewInit {
 
         break;
       }
+      case 'Select': {
+        container.style.display = 'block';
+       
+        container.style.overflow = 'hidden';
+        container.style.width = '200px';
+        container.style.minWidth = '10px';
 
+        const select = iframeDocument.createElement('select');
+        select.style.width = '100%';
+        select.style.height = '100%';
+        select.style.padding = '5px';
+        select.style.fontSize = modalData?.fontSize || '16px';
+        select.style.border = '1px solid #ccc';
+        select.style.borderRadius = '4px';
+        select.style.backgroundColor = '#fbdeb8';
+       
+        select.style.opacity = '0.7';
+       
+
+        // Add placeholder option if exists
+        if (modalData?.placeholder) {
+          const placeholderOption = iframeDocument.createElement('option');
+          placeholderOption.value = '';
+          placeholderOption.textContent = modalData.placeholder;
+          placeholderOption.selected = true;
+          placeholderOption.hidden=true;
+         
+          select.appendChild(placeholderOption);
+        }
+
+        // Add options from modalData
+        if (modalData?.selectOptions) {
+          modalData.selectOptions.forEach(option => {
+            const optionElement = iframeDocument.createElement('option');
+            optionElement.value = option.value;
+            optionElement.textContent = option.data;
+            select.appendChild(optionElement);
+          });
+        }
+
+        container.appendChild(select);
+        break;
+      }
       case 'Date/Time': {
         const dateTimeInput = iframeDocument.createElement(
           'input'
@@ -856,7 +803,7 @@ export class AddComponent implements AfterViewInit {
         // Add visual indicators for readonly state
         dateTimeInput.style.cursor = 'not-allowed';
         dateTimeInput.style.opacity = '0.7';
-
+        dateTimeInput.style.fontSize = modalData?.fontSize || '16px';
         dateTimeInput.style.width = '100%';
         dateTimeInput.style.height = '100%';
         dateTimeInput.style.padding = '4px';
@@ -874,7 +821,7 @@ export class AddComponent implements AfterViewInit {
       }
 
       default:
-        console.error('Unknown input type:', type);
+       
         return;
     }
 
@@ -887,7 +834,7 @@ export class AddComponent implements AfterViewInit {
   }
 
   AgainOpenDialog(key: string, elementId: string, iframeDocument: Document) {
-    console.log(this.modalDataMap.get(elementId));
+    
     const dialogRef = this.dialog.open(InputModalComponent, {
       height: '90vh',
       data: {
@@ -944,7 +891,7 @@ export class AddComponent implements AfterViewInit {
           }
         }
         this.modalDataMap.set(currentElementId, currentModalData);
-        console.log(this.modalDataMap.get(currentElementId));
+       
         const element = iframeDocument.getElementById(currentElementId)
           ?.firstChild as HTMLInputElement;
         element.placeholder =
@@ -952,18 +899,25 @@ export class AddComponent implements AfterViewInit {
         element.setAttribute(
           'id',
           this.modalDataMap.get(currentElementId)?.id || ''
-        );
-        element.style.fontSize =
-          this.modalDataMap.get(currentElementId)?.fontSize || '16px';
-
+        );element.style.fontSize =
+        this.modalDataMap.get(currentElementId)?.fontSize || '16px';
+    
         if (element.tagName.toLowerCase() === 'select') {
           // Clear existing options
           while (element.firstChild) {
             element.removeChild(element.firstChild);
           }
-
+          //add new placeholder
+          const placeholderOption = iframeDocument.createElement('option');
+          placeholderOption.value = '';
+          placeholderOption.textContent = currentModalData.placeholder;
+          placeholderOption.selected = true;
+          placeholderOption.hidden=true;
+         
+          element.appendChild(placeholderOption);
           // Add new options
-          currentModalData.selectOptions?.forEach((option) => {
+
+          currentModalData.selectOptions?.forEach(option => {
             const optElement = document.createElement('option');
             optElement.value = option.value;
             optElement.textContent = option.data;
@@ -974,7 +928,6 @@ export class AddComponent implements AfterViewInit {
           element.setAttribute('id', currentModalData.id || '');
           element.style.fontSize = currentModalData.fontSize || '16px';
         }
-
         if (element.type == 'checkbox') {
           element.setAttribute(
             'name',
@@ -993,7 +946,7 @@ export class AddComponent implements AfterViewInit {
             'id',
             this.modalDataMap.get(currentElementId)?.id || ''
           );
-
+        
           for (let [key, value] of this.modalDataMap) {
             if (
               value.groupname ==
@@ -1005,8 +958,7 @@ export class AddComponent implements AfterViewInit {
           }
           if (label) {
             label.textContent = data.checklabel;
-            label.style.fontSize =
-              this.modalDataMap.get(currentElementId)?.fontSize || '16px';
+            label.style.fontSize = this.modalDataMap.get(currentElementId)?.fontSize || '16px';
           }
         } else if (element.type == 'radio') {
           element.setAttribute(
@@ -1026,7 +978,7 @@ export class AddComponent implements AfterViewInit {
             'id',
             this.modalDataMap.get(currentElementId)?.id || ''
           );
-
+        
           for (let [key, value] of this.modalDataMap) {
             if (
               value.groupname ==
@@ -1038,8 +990,7 @@ export class AddComponent implements AfterViewInit {
           }
           if (label) {
             label.textContent = data.label;
-            label.style.fontSize =
-              this.modalDataMap.get(currentElementId)?.fontSize || '16px';
+            label.style.fontSize = this.modalDataMap.get(currentElementId)?.fontSize || '16px';
           }
         }
       }
@@ -1208,75 +1159,44 @@ export class AddComponent implements AfterViewInit {
         draggedElement.style.left = `${x}px`;
         draggedElement.style.top = `${y}px`;
 
-        console.log(`Element dropped at: ${x}, ${y}`);
+       
       }
     });
   }
   submitpdf() {
-    // const formData = new FormData();
-    // const filename = this.filename.split('.')[0];
-    // if (filename != undefined) {
-    //   formData.append('FileName', filename);
-    // }
-    // const iframe = this.iframeElement.nativeElement;
-    // const iframeDocument =
-    //   iframe.contentDocument || iframe.contentWindow.document;
-    // const divContent = iframeDocument.getElementsByClassName('all-inputs')[0];
-
-    // formData.append('divContent', divContent.outerHTML);
-    // this.data.getpdf(formData).subscribe({
-    //   next: (d: Blob) => {
-    //     let navigationExtras: NavigationExtras = {};
-    //     const blob = new Blob([d], { type: 'application/pdf' });
-    //     const filereader = new FileReader();
-    //     filereader.readAsDataURL(blob);
-    //     filereader.onload = () => {
-    //       const result = filereader.result;
-    //       const data = result?.toString();
-    //       if (data) {
-    //         navigationExtras.state = {
-    //           html_to_pdf: data,
-    //           pdf: this.pdfHtml,
-    //           filename: this.filename,
-    //         };
-    //         this.router.navigate([`/use/${this.formName}`], navigationExtras);
-    //       }
-    //     };
-    //   },
-    // });
-    const filename = this.filename.split('.')[0];
-    const iframe = this.iframeElement.nativeElement;
+   this.loading=true;
+    const filename=this.filename.split('.')[0];
+        const iframe = this.iframeElement.nativeElement;
     const iframeDocument =
       iframe.contentDocument || iframe.contentWindow.document;
     const divContent = iframeDocument.getElementsByClassName('all-inputs')[0];
-    if (filename && this.selectedFormType) {
-      this.data
-        .createNewForm(
-          filename,
-          this.selectedFormType,
-          'AC30A360-3463-4A3F-A8B1-D89315BA2BD3',
-          divContent.outerHTML
-        )
-        .subscribe({
-          next: (data: any) => {
-            console.log(data);
-          },
-        });
-      const snackBarRef = this.snackBar.open(
-        'Form created successfully!',
-        'Close',
-        {
-          duration: 2000, // Adjust duration as needed
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-          panelClass: ['success-snackbar'],
+   
+    if(filename&& this.selectedFormType){
+      const DivContent=divContent.childNodes.length>0?divContent.outerHTML:''
+      this.data.createNewForm(this.formName,filename,this.selectedFormType,"AC30A360-3463-4A3F-A8B1-D89315BA2BD3",DivContent).subscribe({
+        next:(data:any)=>{
+          setTimeout(()=>{
+            this.loading=false;
+            const snackBarRef = this.snackBar.open(
+              `Form successfully created with id=${data}`,
+              'Close',
+              {
+                duration: 1000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+                panelClass: ['success-snackbar'],
+              }
+            );
+            snackBarRef.afterDismissed().subscribe(() => {
+              this.router.navigate(['/template']);
+            });
+           
+          },2000)
+          
         }
-      );
-
-      // Navigate after the snackbar duration completes
-      snackBarRef.afterDismissed().subscribe(() => {
-        this.router.navigate(['/template']);
-      });
+      })
+     
     }
+ 
   }
 }
